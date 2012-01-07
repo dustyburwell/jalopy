@@ -1,0 +1,15 @@
+{
+   "author": "Dusty Burwell <ascalonx@gmail.com>",
+   "name": "Jalopy",
+   "description": "A GitHub API standin for use with Janky",
+   "version": "0.0.1",
+   "engines": {
+      "node": "0.4.11"
+   },
+   "dependencies": {
+      "express": "2.4.3",
+      "coffee-script": "1.1.2",
+      "jade": "0.16.2"
+   },
+   "devDependencies": {}
+}
