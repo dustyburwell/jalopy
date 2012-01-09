@@ -15,6 +15,10 @@ app.configure 'production', () ->
   app.use(express.static(__dirname + '/public', { maxAge: oneYear }))
   app.use(express.errorHandler())
 
+app.use express.cookieParser()
+app.use express.session secret: "keyboard cat";
+app.use express.bodyParser()
+
 app.dynamicHelpers
   base: () -> 
     return '/' == app.route ? '' : app.route 

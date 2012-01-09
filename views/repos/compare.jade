@@ -1,4 +1,29 @@
+style
+  .neg {
+    background: #FDD;
+    display: block;
+  }
+
+  .pos {
+    background: #DFD;
+    display: block;
+  }
+
+  .neu {
+    display: block;
+  }
+
 h1 Compare View
 p Repository: #{repo} Compare #{a} with #{b}
-pre #{out}
-pre #{err}
+each diff in out
+  pre 
+    #{diff.src} - #{diff.dst}
+    each chunk in diff.chunks
+      #{chunk.head.line}
+      each line in chunk.lines
+        if line.type == '-'
+          span.neg #{line.type} #{line.line}
+        else if line.type == '+'
+          span.pos #{line.type} #{line.line}
+        else
+          span.neu #{line.type} #{line.line}

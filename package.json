@@ -9,7 +9,8 @@
    "dependencies": {
       "express": "2.4.3",
       "coffee-script": "1.1.2",
-      "jade": "0.16.2"
+      "jade": "0.16.2",
+      "treeeater": "0.96875.2"
    },
    "devDependencies": {}
 }
