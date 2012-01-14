@@ -7,24 +7,27 @@ class RepositoryDirectory
     return
 
   list: (args..., callback) ->
-    #owner = if args.length then args.shift() else null
-    base = process.env['JALOPY_GIT_DIRECTORY']
 
-    fs.readdir base, (err, owners) ->
-      async.map owners
-      , (owner, callback) -> 
-        fs.readdir path.join(base, owner), (err, repos) ->
-          if err
-            callback err, null
-          else
-            callback null, path.join(owner, repo) for repo in repos
-      , (err, owners) ->
-        callback (owner for owner in owners)
+    options = 
+      base: process.env['JALOPY_GIT_DIRECTORY']
 
-    ###if owner?
-      (repo for repo in @repos when repo.indexOf(owner) == 0).sort()
+    listOwnerRepositories = (owner, callback) ->
+      fs.readdir path.join(options.base, owner), (err, repos) ->
+        if err
+          callback err, null
+        else
+          callback null, (path.join(owner, repo) for repo in repos)
+
+    owner = if args.length then args.shift() else null
+
+    if owner
+      listOwnerRepositories owner, (err, repos) -> 
+        callback repos
     else
-      @repos.sort()
-    ###
+      fs.readdir options.base, (err, owners) ->
+        async.map owners
+        , listOwnerRepositories
+        , (err, owners) ->
+          callback [].concat owners...
 
 module.exports = new RepositoryDirectory()

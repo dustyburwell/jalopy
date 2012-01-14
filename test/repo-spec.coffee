@@ -75,13 +75,14 @@ describe "repo directory", ->
   describe "When listing repositories", ->
     fs = require 'fs'
 
-    it "should query the file system", ->
+    it "should list all repos for all owners", ->
       actual_list = null
 
       spyOn(fs, 'readdir').andCallFake (path, callback) ->
         switch path
-          when '/test/git/directory' then callback null, ['OnTrack']
-          else callback null, ['Panther']
+          when '/test/git/directory' then callback null, ['Illuminate', 'OnTrack']
+          when '/test/git/directory/OnTrack' then callback null, ['Panther']
+          when '/test/git/directory/Illuminate' then callback null, ['Insight']
 
       dir.list (list) ->
         actual_list = list
@@ -91,8 +92,27 @@ describe "repo directory", ->
       , 'list never returned', 1000
 
       runs () ->
-        expect(actual_list).toEqual ['OnTrack/Panther']
+        expect(actual_list).toEqual ['Illuminate/Insight', 'OnTrack/Panther']
         expect(fs.readdir).toHaveBeenCalledWith('/test/git/directory', jasmine.any(Function));
+        expect(fs.readdir).toHaveBeenCalledWith('/test/git/directory/OnTrack', jasmine.any(Function));
+        expect(fs.readdir).toHaveBeenCalledWith('/test/git/directory/Illuminate', jasmine.any(Function));
+
+    it "should list all repos for the owner", ->
+      actual_list = null
+
+      spyOn(fs, 'readdir').andCallFake (path, callback) ->
+        switch path
+          when '/test/git/directory/OnTrack' then callback null, ['DiscoveryAudit', 'Panther']
+
+      dir.list 'OnTrack', (list) ->
+        actual_list = list
+
+      waitsFor () ->
+        actual_list
+      , 'list never returned', 1000
+
+      runs () ->
+        expect(actual_list).toEqual ['OnTrack/DiscoveryAudit', 'OnTrack/Panther']
         expect(fs.readdir).toHaveBeenCalledWith('/test/git/directory/OnTrack', jasmine.any(Function));
       
 
