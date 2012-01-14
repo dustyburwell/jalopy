@@ -3,7 +3,9 @@
 express = require 'express'
 sys = require 'sys'
 app = express.createServer()
+
 port = process.env.PORT || 3000
+gitdir = process.env.JALOPY_GIT_DIRECTORY || '/Users/dusty/Workspace'
 
 app.configure 'development', () ->
   app.use(express.logger({ format: ':method :url' }))
@@ -20,13 +22,15 @@ app.use express.session secret: "keyboard cat";
 app.use express.bodyParser()
 
 app.dynamicHelpers
-  base: () -> 
-    return '/' == app.route ? '' : app.route 
+  base: -> 
+    return if '/' == app.route then '' else app.route 
 
 app.set('views', __dirname + '/views')
 app.set('view engine', 'jade')
 
+
 require('./controllers/repos')(app)
+
 
 app.listen(port)
 console.log("Server listening at port #{port}")
