@@ -9,6 +9,6 @@ task 'build', 'build jalopy', (options) ->
 #  reporter.run ['test']
 
 task "test", "Run test (spec) suite", (options) ->
-  exec "jasmine-node --coffee #{'--verbose ' if options.verbose}#{'--teamcity ' if options.teamcity} test/", (err, stdout, stderr) ->
+  exec "jasmine-node --coffee #{'--verbose ' if options.verbose}#{'--teamcity ' if options.teamcity} --match .*- ./", (err, stdout, stderr) ->
     console.log stdout
     console.log "Error: #{stderr}" if stderr

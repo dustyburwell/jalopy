@@ -15,10 +15,11 @@ class RepositoryDirectory
       else
         @repos.sort()
 
-    callback(repos)
+    callback(null, repos)
 
-  add: (owner, name) ->
+  add: (owner, name, callback) ->
     @repos.unshift "#{owner}/#{name}"
+    callback null
 
 
 module.exports = new RepositoryDirectory()

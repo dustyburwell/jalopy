@@ -15,36 +15,20 @@ module.exports = (app) ->
     res.render 'repos/new', { error: req.flash('error'), info: req.flash('info') }
 
   app.post '/repositories/new', (req, res) ->
+    repo = require('./repos')
+
     owner = req.body.repository.owner
-    name = req.body.repository.name
-    desc = req.body.repository.desc
+    name  = req.body.repository.name
+    desc  = req.body.repository.desc
 
-    ownerdir = path.join('/Users/dusty/Workspace', owner)
-    repodir = path.join(ownerdir, name)
-
-    git = new Git { cwd: ownerdir }
-
-    console.log ownerdir
-
-    init_repo = () ->
-      git.init "--bare", "#{name}", (out) ->
+    repo.add owner, name, (err) ->
+      if err
+        req.flash 'error', err
+        res.redirect 'back'
+      else
         req.flash 'info', 'New repository created'
         res.redirect 'home'
 
-    fs.stat ownerdir, (err, stats) ->
-      if err != null
-        fs.mkdir ownerdir, 0755, (err) ->
-          init_repo()
-      else if stats.isDirectory()
-        is_git_repo repodir, (is_repo) ->
-          if is_repo
-            req.flash 'error', 'The repository already exists'
-            res.redirect 'back'
-          else
-            init_repo()
-      else
-        req.flash 'error', 'The owner directory cannot be created'
-  
   app.get '/:path([\\w\\W]+)/compare/:old...:new', (req, res) ->
     repo_dir = "/Users/dusty/Workspace/#{req.params.path}"
 
@@ -61,19 +45,26 @@ module.exports = (app) ->
       else
         res.render 'repos/notfound', repo: req.params.path
 
-  app.get '/:path(*)?', (req, res) ->
+  app.get '/:owner', (req, res, next) ->
+    repo = require('./repos')
+    path = req.params.owner
 
-    util  = require('util')
-    exec  = require('child_process').exec
+    repo.list path, (err, list) ->
+      if err
+        console.log "error while listing repositories #{err}"
+        next()
+      else
+        res.render 'repos/ownerRepos', { 
+          path:  path,
+          repos: list
+        }
 
-    cd = process.cwd()
-    process.chdir("/Users/dusty/Workspace/")
-
-    exec("find ./ -iname branches", (error, stdout, stderr) ->
-      process.chdir(cd)
-
+  app.get '/', (req, res) ->
+    repo = require('./repos')
+    
+    repo.list (err, list) ->
+      console.log "error while listing repositories #{err}" if err
+        
       res.render 'repos/index', { 
-        repo: req.params.path,
-        out:  stdout
+        repos: list
       }
-    )
