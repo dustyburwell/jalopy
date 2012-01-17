@@ -34,7 +34,7 @@ class RepositoryDirectory
           callback err, [].concat owners...
 
   add: (owner, repository, callback) =>
-    Git = require('treeeater').Git
+    Git = require('treeeater-dustyburwell').Git
 
     path.exists path.join(@options().base, owner), (exists) =>
       if not exists

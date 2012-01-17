@@ -1,5 +1,5 @@
 sys  = require 'sys'
-{ Git, RawGit, NiceGit } = require 'treeeater'
+{ Git, RawGit, NiceGit } = require 'treeeater-dustyburwell'
 util = require 'util'
 proc = require('child_process')
 fs   = require('fs')

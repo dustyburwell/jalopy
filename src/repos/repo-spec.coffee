@@ -137,7 +137,7 @@ describe "Directory repository", ->
 
   describe "When adding a repository", ->
     path = require 'path'
-    tree = require('treeeater')
+    tree = require('treeeater-dustyburwell')
 
     it "should fail if the owner doesn't exist", ->
       error = null;
